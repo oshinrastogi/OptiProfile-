@@ -13,6 +13,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import session from 'express-session';
 import userModel from './models/userModel.js';
+import adminRoutes from './routes/adminRoutes.js'
 
 dotenv.config();// load env variables 
 //dbconfig
@@ -51,6 +52,7 @@ app.use(passport.session());
 //routes
 app.use('/api/v1/auth',authRoutes);
 app.use('/api/v1/auth',resumeRoutes);
+app.use('/api/v1/auth',adminRoutes);
 // app.use('/api/v1/product',productRoutes)
 // app.use(express.static(path.join(__dirname,"public")));
 

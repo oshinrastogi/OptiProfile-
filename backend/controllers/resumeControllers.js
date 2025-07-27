@@ -1,6 +1,7 @@
 import fs from 'fs/promises'; 
 import PdfParse from 'pdf-parse-new';
 import axios from 'axios';
+import userSkills from '../models/userSkills.js';
 
 export const analyzeResumeController = async (req, res) => {
 
@@ -11,12 +12,16 @@ export const analyzeResumeController = async (req, res) => {
     const { jobDescription, jobTitle } = req.body;
     const resumePath = req.file.path; 
     // console.log(resumePath);
+    const userId = req.user._id; 
+    const userEmail = req.user.email;
+    console.log(userId);
+    console.log(userEmail);
 
     let resumeText = '';
     try {
         const dataBuffer = await fs.readFile(resumePath);
         resumeText = (await PdfParse(dataBuffer)).text;
-        console.log(resumeText);
+        // console.log(resumeText);
         
         if (!resumeText.trim()) {
             return res.status(400).json({ success: false, message: 'Could not extract text from the PDF. Please ensure it is not an image-only PDF.' });
@@ -25,7 +30,7 @@ export const analyzeResumeController = async (req, res) => {
         // Prompt for Gemini API
         const prompt = `You are an expert resume analyst. Your task is to evaluate a candidate's
         resume against a specific job description and title. Provide a comprehensive analysis in 
-        JSON format, strictly following the provided schema. Do NOT include any text outside the JSON object.
+        JSON format, strictly following the provided schema. Do NOT include any text outside the JSON object. 
 
         The JSON schema requires the following properties:
         - "is_eligible": A string ('Eligible', 'Potentially Eligible', 'Not Eligible').
@@ -37,7 +42,7 @@ export const analyzeResumeController = async (req, res) => {
         - "missing_keywords": An array of strings.
         - "five_steps_to_stand_out": An array of 5 strings (actionable steps).
 
-        Ensure all arrays are populated with relevant information. 
+        Ensure all arrays are populated with relevant information. (must)
 
         Also if you are not able to identify something, give a reason to the user why you can not identify something. 
         make the response to fulfil user expectations.
@@ -138,6 +143,35 @@ export const analyzeResumeController = async (req, res) => {
 
         geminiAnalysis = JSON.parse(geminiAnalysis);
         console.log(geminiAnalysis);
+        console.log("333333333333333333333333");
+        const { extracted_skills, ats_score } = geminiAnalysis;
+
+        const normalizedSkills = Array.isArray(extracted_skills)
+            ? extracted_skills.map(skill => String(skill).toLowerCase().trim())
+            : [];
+
+        let UserSkills = await userSkills.findOne({ user: userId });
+
+        if (UserSkills) {
+            UserSkills.skills = [...new Set([...UserSkills.skills, ...normalizedSkills])];
+            UserSkills.highestAtsScore = Math.max(UserSkills.highestAtsScore, ats_score);
+            UserSkills.lastUpdated = Date.now();
+        } else {
+            UserSkills = new userSkills({
+                user: userId,
+                userEmail: userEmail,
+                skills: normalizedSkills,
+                highestAtsScore: ats_score,
+                lastUpdated: Date.now(),
+            });
+        }
+        console.log(UserSkills.userEmail);
+        console.log(UserSkills.skills);
+        console.log(UserSkills.highestAtsScore);
+        console.log("00000000000000000000");
+
+        await UserSkills.save();
+
         res.status(200).json({
             success: true,
             message: 'Resume analysis complete.',

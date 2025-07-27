@@ -1,7 +1,6 @@
-// backend/models/UserSkillProfileModel.js
 import mongoose from 'mongoose';
 
-const userSkillsSchema = new mongoose.Schema({
+const userSkills = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -18,7 +17,7 @@ const userSkillsSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
     }],
-    highestAtsScore: { 
+    highestAtsScore: {
         type: Number,
         default: 0,
     },
@@ -32,4 +31,4 @@ const userSkillsSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-export default mongoose.model('UserSkills', userSkillsSchema);
+export default mongoose.model('userSkills', userSkills);
