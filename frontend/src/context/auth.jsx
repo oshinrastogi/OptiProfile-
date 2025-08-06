@@ -1,66 +1,3 @@
-// import { useState,useContext,createContext ,useEffect} from "react";
-// import axios from "axios";
-// // import { Cookies } from "react-cookie";
-
-// const AuthContext = createContext();
-
-// const AuthProvider =({children})=>{
-//     const [auth,setAuth] = useState({
-//         user:null,
-//         token:""
-//     });
-//     //default axios 
-
-//     axios.defaults.headers.common['Authorization']=auth?.token
-//     axios.defaults.withCredentials = true;
-//     useEffect(()=>{
-//         const data=localStorage.getItem('auth');
-//         if(data){
-//             const parseData=JSON.parse(data);
-//             setAuth({
-//                 ...auth,
-//                 user:parseData.user,
-//                 token:parseData.token
-//             })
-//         }
-//         else{
-            
-//              const { data } = axios.get(`${import.meta.env.VITE_BACKEND_API}/api/v1/auth/current-user`); // Your backend endpoint
-//                 console.log(data);
-//                 if (data?.success && data?.user) {
-//                     console.log("Auth: Backend validation successful. User is authenticated.");
-//                     setAuth(prevAuth => ({
-//                         user: data.user, // Always update user data from backend (most authoritative)
-//                         token: prevAuth.token || "", // Keep token if it was from localStorage, otherwise empty
-//                     }));
-//                     // Ensure user data is consistent in localStorage after successful backend validation
-//                     localStorage.setItem('auth_user_data', JSON.stringify(data.user));
-//                 } else {
-//                     // Backend indicates not authenticated (cookie invalid/expired, no token found)
-//                     console.log("Auth: Backend validation failed. Clearing auth state.");
-//                     setAuth({ user: null, token: "" }); // Clear auth state
-//                     localStorage.removeItem('auth_user_data'); // Clear user data
-//                     localStorage.removeItem('auth'); // Clear any old 'auth' key (if used for full object)
-//                 }
-//         }
-        
-//         //eslint-disable-next-line
-//     },[]);
-//     return (
-//         <AuthContext.Provider value={[auth,setAuth]}>
-//             {children}
-//         </AuthContext.Provider>
-//     );
-// };
-
-
-// //custom hook
-
-// const useAuth =() => useContext(AuthContext);
-
-// export {useAuth,AuthProvider};
-
-// src/context/auth.js
 import { useState, useContext, createContext, useEffect } from "react";
 import axios from "axios";
 
@@ -99,13 +36,12 @@ const AuthProvider = ({ children }) => {
                     console.log("Auth: User data partially initialized from localStorage.");
                 } catch (e) {
                     console.error("Auth: Error parsing localStorage 'auth_user_data':", e);
-                    localStorage.removeItem('auth_user_data'); // Clear corrupt data
+                    localStorage.removeItem('auth_user_data'); 
                 }
             }
 
-            // console.log("Auth: Attempting to validate auth status with backend...");
             try {
-                const { data } = await axios.get('/api/v1/auth/current-user'); // Your backend endpoint
+                const { data } = await axios.get('/api/v1/auth/current-user'); 
 
                 if (data?.success && data?.user) {
                     console.log("Auth: Backend validation successful. User is authenticated.");
@@ -117,12 +53,11 @@ const AuthProvider = ({ children }) => {
                 } else {
                     console.log("Auth: Backend validation failed. Clearing auth state.");
                     setAuth({ user: null, token: "" }); 
-                    localStorage.removeItem('auth_user_data'); // Clear user data
-                    localStorage.removeItem('auth'); // Clear any old 'auth' key (if used for full object)
+                    localStorage.removeItem('auth_user_data');
+                    localStorage.removeItem('auth');
                 }
             } catch (error) {
                 console.error("Auth: Backend auth validation failed:", error.response?.data?.message || error.message);
-                // On error (e.g., network error, 401/403 from backend), clear auth state.
                 setAuth({ user: null, token: "" });
                 localStorage.removeItem('auth_user_data');
                 localStorage.removeItem('auth');
@@ -132,7 +67,7 @@ const AuthProvider = ({ children }) => {
         checkAuthStatus();
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Empty dependency array means this effect runs only once on mount
+    }, []); 
 
     return (
         <AuthContext.Provider value={[auth, setAuth]}>

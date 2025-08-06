@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
-import userModel from '../models/userModel.js'; // Adjust path as needed
+import userModel from '../models/userModel.js'; 
 
 export const protect = async (req, res, next) => {
     let token;
-
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
         console.log("Auth: Token found in Authorization header.");

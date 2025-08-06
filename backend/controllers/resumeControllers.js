@@ -8,10 +8,11 @@ export const analyzeResumeController = async (req, res) => {
     if (!req.file || !req.body.jobDescription || !req.body.jobTitle) {
         return res.status(400).json({ success: false, message: 'Missing resume file, job description, or job title.' });
     }
-
+                                                                                                                                       
     const { jobDescription, jobTitle } = req.body;
     const resumePath = req.file.path; 
     // console.log(resumePath);
+
     const userId = req.user._id; 
     const userEmail = req.user.email;
     console.log(userId);
@@ -30,23 +31,8 @@ export const analyzeResumeController = async (req, res) => {
         // Prompt for Gemini API
         const prompt = `You are an expert resume analyst. Your task is to evaluate a candidate's
         resume against a specific job description and title. Provide a comprehensive analysis in 
-        JSON format, strictly following the provided schema. Do NOT include any text outside the JSON object. 
-
-        The JSON schema requires the following properties:
-        - "is_eligible": A string ('Eligible', 'Potentially Eligible', 'Not Eligible').
-        - "ats_score": A number (0-100).
-        - "strengths": An array of strings (bullet points).
-        - "weaknesses": An array of strings (bullet points).
-        - "extracted_skills": A comprehensive list of all technical and soft skills explicitly mentioned or strongly implied in the candidate's resume, normalized to common terms (e.g., 'React.js' to 'React', 'Node.js' to 'Node').
-        - "skill_gaps": An array of strings (missing skills).
-        - "missing_keywords": An array of strings.
-        - "five_steps_to_stand_out": An array of 5 strings (actionable steps).
-
-        Ensure all arrays are populated with relevant information. (must)
-
-        Also if you are not able to identify something, give a reason to the user why you can not identify something. 
-        make the response to fulfil user expectations.
-
+        JSON format, strictly following the provided schema.
+        
         ---
         Job Title: ${jobTitle}
 
@@ -89,11 +75,7 @@ export const analyzeResumeController = async (req, res) => {
                     items: { type: "STRING" },
                     description: "An array of bullet points highlighting the resume's weaknesses or gaps compared to the job description."
                 },
-                extracted_skills: {
-                type: "ARRAY",
-                items: { type: "STRING" },
-                description: "A comprehensive list of all technical and soft skills explicitly mentioned or strongly implied in the candidate's resume, normalized to common terms (e.g., 'React.js' to 'React', 'Node.js' to 'Node')."
-                },
+                
                 skill_gaps: {
                     type: "ARRAY",
                     items: { type: "STRING" },
@@ -108,7 +90,12 @@ export const analyzeResumeController = async (req, res) => {
                     type: "ARRAY",
                     items: { type: "STRING" },
                     description: "An array of 5 actionable steps the candidate can follow right now to make their resume stand out for this job description."
-                }
+                },
+                extracted_skills: {
+                type: "ARRAY",
+                items: { type: "STRING" },
+                description: "A comprehensive list of all technical and soft skills explicitly mentioned or strongly implied in the candidate's resume, normalized to common terms (e.g., 'React.js' to 'React', 'Node.js' to 'Node')."
+                },
                     },
                 propertyOrdering: [
                     "is_eligible",
@@ -190,3 +177,20 @@ export const analyzeResumeController = async (req, res) => {
         }
     }
 };
+
+// Do NOT include any text outside the JSON object. 
+
+//         The JSON schema requires the following properties:
+//         - "is_eligible": A string ('Eligible', 'Potentially Eligible', 'Not Eligible').
+//         - "ats_score": A number (0-100).
+//         - "strengths": An array of strings (bullet points).
+//         - "weaknesses": An array of strings (bullet points).
+//         - "extracted_skills": A comprehensive list of all technical and soft skills explicitly mentioned or strongly implied in the candidate's resume, normalized to common terms (e.g., 'React.js' to 'React', 'Node.js' to 'Node').
+//         - "skill_gaps": An array of strings (missing skills).
+//         - "missing_keywords": An array of strings.
+//         - "five_steps_to_stand_out": An array of 5 strings (actionable steps).
+
+//         Ensure all arrays are populated with relevant information. (must)
+
+//         Also if you are not able to identify something, give a reason to the user why you can not identify something. 
+//         make the response to fulfil user expectations. Always ensure every key in json object is populated 

@@ -1,7 +1,7 @@
 import toast,{Toaster} from 'react-hot-toast';
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Assuming you're using React Router
+import { useNavigate } from 'react-router-dom'; 
 
 function Register() {
     const [name, setName] = useState('');
@@ -10,12 +10,9 @@ function Register() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-
     const BACKEND_URL =  import.meta.env.VITE_BACKEND_API 
 
     const handleGoogleRegister = () => {
-        // Redirect the user to the backend's Google OAuth initiation endpoint
-        // The backend will then handle the redirect to Google's auth page
         window.location.href = `${BACKEND_URL}/api/v1/auth/google`;
     };
 
@@ -40,13 +37,12 @@ function Register() {
         }
     }
     return (
-        // <div className='flex items-center justify-center'> 
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
                 <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Join Resume Master!</h2>
 
                 {/* Google OAuth Button */}
-                <button
+                <button 
                     onClick={handleGoogleRegister}
                     className="w-full flex items-center justify-center bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out mb-6"
                 >
@@ -125,7 +121,7 @@ function Register() {
                 <p className="text-center text-gray-600 text-sm mt-6">
                     Already have an account?{' '}
                     <button
-                        onClick={() => navigate('/login')} // Assuming you have a /login route
+                        onClick={() => navigate('/login')} 
                         className="text-blue-600 hover:underline font-semibold focus:outline-none"
                     >
                         Login
@@ -133,7 +129,6 @@ function Register() {
                 </p>
             </div>
         </div>
-        // </div>
     );
 }
 

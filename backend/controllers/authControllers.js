@@ -103,7 +103,6 @@ export const loginController = async(req,res)=>{
 
 
 export const currentUserController = async (req, res) => {
-    // req.user is populated by the 'protect' middleware
     if (!req.user) {
         return res.status(404).json({
             success: false,

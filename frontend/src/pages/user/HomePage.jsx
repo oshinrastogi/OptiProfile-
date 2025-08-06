@@ -97,7 +97,7 @@ const HomePage = () => {
                 {/* Left Column: Input Form */}
                 <div className="w-full lg:w-1/2 space-y-6 overflow-y-auto">
                     <h1 className="text-4xl font-extrabold text-gray-900 text-center mb-6">
-                        Resume <span className="text-blue-600">Analyzer</span>
+                        Resume <span className="text-gray-900">Analyzer</span>
                     </h1>
                     <p className="text-gray-600 text-center mb-8">
                         Upload your resume, provide a job description, and get instant feedback!
@@ -181,21 +181,16 @@ const HomePage = () => {
 
                 {/* Right Column: Analysis Result */}
                 <div className="w-full lg:w-1/2 p-6 bg-blue-50 rounded-xl shadow-inner flex flex-col">
-                    <h2 className="text-3xl font-bold text-blue-800 text-center mb-6">
+                    <h2 className="text-3xl font-bold text-grey-800 text-center mb-6">
                         Analysis <span className="text-gray-900">Results</span>
                     </h2>
                     {loading && analysisResult === '' && (
                         <p className="text-center text-blue-600 text-lg">
-                            Your resume is being analyzed by Gemini. This may take a moment...
+                            Your resume is being analyzed. This may take a moment...
                         </p>
                     )}
                     {analysisResult ? (
-                        // <div className="prose max-w-none text-gray-800 leading-relaxed overflow-y-auto flex-grow">
-                        //     {/* You might want to parse markdown if Gemini returns it */}
-                        //     <p className="whitespace-pre-wrap">Eligibility: {analysisResult.is_eligible}</p>
-                        //     <p className="whitespace-pre-wrap">ATS_Score: {analysisResult.ats_score}</p>
-                            
-                        // </div>
+                      
                         <div className="prose max-w-none text-gray-800 leading-relaxed overflow-y-auto flex-grow">
                             {/* Eligibility and ATS Score */}
                             <div className="flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-lg shadow-md mb-6">

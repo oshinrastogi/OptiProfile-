@@ -37,10 +37,10 @@ app.use(cookieParser());
 
 // Session Middleware 
 app.use(session({
-    secret: process.env.JWT_SECRET, // Use a strong secret
+    secret: process.env.JWT_SECRET, 
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production' } // `secure: true` in production
+    cookie: { secure: process.env.NODE_ENV === 'production' } 
 }));
 
 // Passport Middleware
@@ -57,6 +57,7 @@ app.use('/api/v1/auth',adminRoutes);
 // app.use(express.static(path.join(__dirname,"public")));
 
 // Passport Google OAuth Strategy
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -66,38 +67,30 @@ passport.use(new GoogleStrategy({
 
 async (accessToken, refreshToken, profile, done) => {
     try {
-        const email = profile.emails[0].value; // Get email from profile
+        const email = profile.emails[0].value; 
 
-        // 1. Try to find user by Google ID
         let user = await userModel.findOne({ googleId: profile.id });
 
         if (user) {
-            // Case 1: User found by Google ID (already linked)
             console.log("User found by Google ID:", user.email);
-            return done(null, user); // Log them in
+            return done(null, user); 
         }
 
-        // 2. If not found by Google ID, try to find by Email
         user = await userModel.findOne({ email });
 
         if (user) {
-            // Case 2: User found by email (already exists, likely traditional)
-            // Link Google ID to existing account and save
             console.log("User found by email (linking Google ID):", user.email);
             user.googleId = profile.id;
-            user.profilePicture = profile.photos && profile.photos.length > 0 ? profile.photos[0].value : user.profilePicture; // Update picture if available
+            user.profilePicture = profile.photos && profile.photos.length > 0 ? profile.photos[0].value : user.profilePicture; 
             await user.save();
-            return done(null, user); // Log them in
+            return done(null, user); 
         }
 
         else {
-            // New user, create an account
             user = new userModel({
                 googleId: profile.id,
                 name: profile.displayName,
-                email: profile.emails[0].value, // Assuming email is present and unique
-                // profilePicture: profile.photos[0].value // Store profile picture if available
-                // You might add a default password or mark as social login
+                email: profile.emails[0].value,
             });
             await user.save();
             done(null, user);
@@ -120,20 +113,17 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// Middleware to send JWT token as HTTP-only cookie
-// You can reuse this from your manual login setup
 const sendTokenResponse = (user, statusCode, res) => {
-    const token = user.getSignedJwtToken(); // Assuming this method exists on your User model
+    const token = user.getSignedJwtToken(); 
 
     const cookieOptions = {
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // e.g., 7 days
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax', // Adjust as needed, 'None' for cross-domain but requires secure:true
+        sameSite: 'Lax', 
     };
-
-    res.cookie('token', token, cookieOptions)
     
+    res.cookie('token', token, cookieOptions)
 };
 
 
@@ -144,20 +134,19 @@ app.get('/api/v1/auth/google',
 
 app.get('/api/v1/auth/google/callback',
     
-    passport.authenticate('google'), // Removed session:false here for typical Passport flow, but if you don't want sessions, we'll handle it below.
+    passport.authenticate('google'), 
     (req, res) => {
-        // This block only runs on successful authentication
+        // on successful authentication
         sendTokenResponse(req.user, 200, res);
         return res.redirect(`${process.env.FRONTEND_API}`);
 
     },
-    // Add an error handling middleware for Passport failures that don't redirect
     (err, req, res, next) => {
         console.error("Passport authentication error:", err);
-        // You can send a specific error response or redirect here if needed
         res.status(500).send('Authentication failed');
     }
 );
+
 //rest api
 app.get('/',(req,res)=>{
     res.send({

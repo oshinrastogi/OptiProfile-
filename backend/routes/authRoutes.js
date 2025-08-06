@@ -1,7 +1,7 @@
 import express from 'express';
 import {registerController , loginController, currentUserController } from '../controllers/authControllers.js'; 
 import { protect } from '../middlewares/authMiddlewares.js';
-// import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
+
 //route object
 const router = express.Router()
 

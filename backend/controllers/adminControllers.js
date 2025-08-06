@@ -39,8 +39,6 @@ export const searchCandidatesBySkills = async (req, res) => {
         }
 
         // Sort candidates:
-        // 1. By highestAtsScore (descending)
-        // 2. Then by matchedSkillsCount (descending)
         candidates.sort((a, b) => {
             if (b.matchedSkillsCount !== a.matchedSkillsCount) {
                 return b.matchedSkillsCount - a.matchedSkillsCount;
