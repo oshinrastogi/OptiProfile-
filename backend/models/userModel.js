@@ -8,7 +8,11 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         maxlength: [50, 'Name can not be more than 50 characters']
     },
-    googleId: { type: String, unique: true, sparse: true },
+    googleId: { 
+        type: String,
+        unique: true, 
+        sparse: true 
+    },
     email: {
         type: String,
         required: [true, 'Please add an email'],
@@ -30,6 +34,7 @@ const UserSchema = new mongoose.Schema({
         enum: ['google', null], 
         default: null
     },
+
     oauth_provider_id: {
         type: String,
         sparse: true, 
@@ -37,6 +42,7 @@ const UserSchema = new mongoose.Schema({
             return this.oauth_provider !== null;
         }
     },
+
     profilePicture: {
         type: String, 
         default: null

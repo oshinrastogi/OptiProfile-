@@ -15,11 +15,13 @@ import session from 'express-session';
 import userModel from './models/userModel.js';
 import adminRoutes from './routes/adminRoutes.js'
 
-dotenv.config();// load env variables 
-//dbconfig
-connectDB();
+dotenv.config(); // load env variables 
+
+connectDB(); //dbconfig
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const app = express();
 
 
@@ -32,8 +34,9 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended:true})); //forms
 app.use(cookieParser()); 
+
 
 // Session Middleware 
 app.use(session({
@@ -43,21 +46,19 @@ app.use(session({
     cookie: { secure: process.env.NODE_ENV === 'production' } 
 }));
 
+
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(multer());
 
 //routes
 app.use('/api/v1/auth',authRoutes);
 app.use('/api/v1/auth',resumeRoutes);
 app.use('/api/v1/auth',adminRoutes);
-// app.use('/api/v1/product',productRoutes)
-// app.use(express.static(path.join(__dirname,"public")));
+
 
 // Passport Google OAuth Strategy
-
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -65,10 +66,10 @@ passport.use(new GoogleStrategy({
     scope: ['profile', 'email'] 
 },
 
+
 async (accessToken, refreshToken, profile, done) => {
     try {
         const email = profile.emails[0].value; 
-
         let user = await userModel.findOne({ googleId: profile.id });
 
         if (user) {
@@ -100,6 +101,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
 }));
 
+
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
@@ -125,7 +127,6 @@ const sendTokenResponse = (user, statusCode, res) => {
     
     res.cookie('token', token, cookieOptions)
 };
-
 
 // Routes
 app.get('/api/v1/auth/google',
@@ -159,6 +160,3 @@ const port =process.env.port || 8080;
 app.listen(port,()=>{
     console.log(`server is running on port ${port}`)
 });
-
-
-// installing morgan colors mongoose dotenv

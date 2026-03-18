@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom'; 
@@ -17,58 +17,46 @@ const AdminDashboard = () => {
 
     // Admin role check and redirection
     useEffect(() => {
-        // Check if user is authenticated and has admin role
         if (!auth?.user || auth.user.role !== 1) {
             toast.error("Redirecting to login page...");
-            navigate('/login'); // Redirect to login page
+            localStorage.removeItem('auth_user_data');
+            navigate('/login');
         }
-    }, [auth, navigate]); // Depend on auth and navigate
+    }, [auth, navigate]); 
 
-    // Function to fetch candidates based on skill search query
+
     useEffect(() => {
         const fetchCandidates = async () => {
-
-            if (!auth?.user || auth.user.role !== 1) {
-                setLoading(false); // Stop loading if not authorized
-                return;
-            }
 
             setLoading(true);
             setError('');
             setCandidates([]); 
 
             try {
-                const token = auth.token; // Get token from auth context
-                // if (!token) {
-                //     toast.error('Authentication token missing. Please log in.');
-                //     navigate('/login');
-                //     return;
-                // }
-
-                // Construct URL and params for skill search
+              
                 const params = {};
                 if (skillSearchQuery.trim()) {
-                    params.skills = skillSearchQuery.trim(); // Backend expects 'skills' query param
+                    params.skills = skillSearchQuery.trim(); 
                 }
 
-                // Corrected URL: /api/admin/candidates as per backend routes
                 const response = await axios.get(`${BACKEND_URL}/api/v1/auth/candidates`, {
                     params: params,
                     headers: {
-                        Authorization: `Bearer ${token}`, // Send JWT token
+                        // Authorization: `Bearer ${token}`, 
                     },
-                    withCredentials: true // Keep if your backend uses cookies/sessions
+                    withCredentials: true 
                 });
 
                 if (response.data.success) {
                     setCandidates(response.data.candidates);
+                    // console.log(candidates.length);
                     if (response.data.candidates.length === 0) {
                     } else {
                         // toast.success('Candidates fetched successfully!');
                     }
                 } else {
                     setError(response.data.message || 'Failed to fetch candidates.');
-                    // toast.error(response.data.message || 'Failed to fetch candidates.');
+                    toast.error(response.data.message || 'Failed to fetch candidates.');
                 }
             } catch (err) {
                 console.error('Error fetching candidates:', err);
@@ -92,17 +80,8 @@ const AdminDashboard = () => {
         } else {
             setLoading(false); 
         }
-    }, [skillSearchQuery, auth, BACKEND_URL, navigate]); 
+    }, [skillSearchQuery]); 
 
-    if (!auth?.user || auth.user.role !== 1) {
-        return (
-            <Layout>
-                <div className="flex justify-center items-center h-screen">
-                    <h1 className="text-2xl text-red-600">Access Denied: You are not an administrator.</h1>
-                </div>
-            </Layout>
-        );
-    }
 
     return (
         <Layout>
@@ -110,8 +89,6 @@ const AdminDashboard = () => {
                 <h1 className="text-4xl font-extrabold text-gray-900 text-center mb-8">
                     Admin <span className="text-600">Dashboard</span>
                 </h1>
-
-                {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
 
                 {/* Skill Search Input */}
@@ -123,7 +100,7 @@ const AdminDashboard = () => {
                         onChange={(e) => {
                             setSkillSearchQuery(e.target.value);
                         }}
-                        placeholder="e.g., React, Node.js, MongoDB"
+                        placeholder="e.g., React, Node, MongoDB"
                         className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                     />
                 </div>
@@ -131,8 +108,8 @@ const AdminDashboard = () => {
                 {/* Candidates List */}
                 <div className="bg-white shadow-lg rounded-xl p-6">
                     <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        Candidates with: <span className="text-yellow-600">
-                            {skillSearchQuery ? `  "${skillSearchQuery}"` : 'All'} {/* Adjusted text */}
+                        Candidates that match: <span className="text-yellow-600">
+                            {skillSearchQuery ? `  "${skillSearchQuery}"` : ''} 
                         </span>
                     </h3>
 
@@ -140,7 +117,7 @@ const AdminDashboard = () => {
                         <p className="text-center text-blue-600 text-lg">Loading candidates...</p>
                     ) : candidates.length === 0 ? (
                         <p className="text-center text-gray-600 text-lg">
-                            {skillSearchQuery ? `No candidates found matching "${skillSearchQuery}".` : 'No candidates found. Enter skills to search.'}
+                            {skillSearchQuery ? `No candidates found matching "${skillSearchQuery}".` : 'Enter skills to search.'}
                         </p>
                     ) : (
                         <div className="overflow-x-auto">

@@ -1,5 +1,5 @@
-import toast,{Toaster} from 'react-hot-toast';
-import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import  { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 

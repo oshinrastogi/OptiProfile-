@@ -4,6 +4,7 @@ import User from '../models/userModel.js';
 export const searchCandidatesBySkills = async (req, res) => {
     try {
         const { skills } = req.query; 
+        console.log(skills);
 
         if (!skills) {
             return res.status(400).json({ success: false, message: 'Please provide skills to search for.' });
@@ -19,6 +20,7 @@ export const searchCandidatesBySkills = async (req, res) => {
             const matchedSkills = userSkillProfile.skills.filter(skill =>
                 searchSkillsArray.includes(skill)
             );
+            
 
             if (matchedSkills.length > 0) {
                 // Fetch user details (name) from the User model

@@ -31,7 +31,8 @@ const AuthProvider = ({ children }) => {
                     userFromLocalStorage = JSON.parse(storedUserData);
                     setAuth(prevAuth => ({
                         ...prevAuth, 
-                        user: userFromLocalStorage, 
+                        user: userFromLocalStorage.user,
+                        token: "",
                     }));
                     console.log("Auth: User data partially initialized from localStorage.");
                 } catch (e) {
@@ -54,18 +55,17 @@ const AuthProvider = ({ children }) => {
                     console.log("Auth: Backend validation failed. Clearing auth state.");
                     setAuth({ user: null, token: "" }); 
                     localStorage.removeItem('auth_user_data');
-                    localStorage.removeItem('auth');
+                   
                 }
             } catch (error) {
                 console.error("Auth: Backend auth validation failed:", error.response?.data?.message || error.message);
                 setAuth({ user: null, token: "" });
                 localStorage.removeItem('auth_user_data');
-                localStorage.removeItem('auth');
+                
             }
         };
 
         checkAuthStatus();
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); 
 

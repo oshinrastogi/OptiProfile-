@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Layout from '../../components/Layout/Layout';
 import { useAuth } from '../../context/auth';
 
 const HomePage = () => {
-    // State for form inputs
+    //form inputs
     const [resumeFile, setResumeFile] = useState(null);
     const [jobDescription, setJobDescription] = useState('');
     const [jobTitle, setJobTitle] = useState('');
 
-    // State for API response and loading
+    //API response 
     const [analysisResult, setAnalysisResult] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -18,7 +18,7 @@ const HomePage = () => {
 
     const BACKEND_URL = import.meta.env.VITE_BACKEND_API;
 
-    // Handler for file input change
+    // file input change
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file && file.type === 'application/pdf') {
@@ -36,10 +36,10 @@ const HomePage = () => {
         setError('');
         setAnalysisResult('');
 
-        if(!auth || !auth.user){
-            toast.error("Please login to continue");
-            return ;
-        }
+        // if(!auth || !auth.user){
+        //     toast.error("Please login to continue");
+        //     return ;
+        // }
         if (!resumeFile) {
             setError('Please upload your resume PDF.');
             toast.error('Please upload your resume PDF.');
@@ -64,12 +64,11 @@ const HomePage = () => {
         formData.append('jobTitle', jobTitle);
 
         try {
-
             const response = await axios.post(`${BACKEND_URL}/api/v1/auth/resume/analyze`, formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data', // Important for file uploads
+                    'Content-Type': 'multipart/form-data',
                 },
-                withCredentials: true,
+                // withCredentials: true,
             });
 
             if (response.data.success) {
@@ -79,13 +78,15 @@ const HomePage = () => {
                 setError(response.data.message || 'Analysis failed.');
                 toast.error(response.data.message || 'Analysis failed.');
             }
+
         } catch (err) {
             console.error('Error during resume analysis:', err);
             const errorMessage = err.response?.data?.message || 'Failed to connect to the server or analyze resume.';
             setError(errorMessage);
             toast.error(errorMessage);
+
         } finally {
-            setLoading(false); // End loading state
+            setLoading(false); 
         }
     };
 
@@ -146,7 +147,7 @@ const HomePage = () => {
                                 id="jobDescription"
                                 value={jobDescription}
                                 onChange={(e) => setJobDescription(e.target.value)}
-                                rows="8"
+                                rows="5"
                                 placeholder="Paste the full job description here..."
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 resize-y"
                                 required
@@ -162,7 +163,7 @@ const HomePage = () => {
                         <button
                             type="submit"
                             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-bold text-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out transform hover:scale-105"
-                            disabled={loading} // Disable button while loading
+                            disabled={loading} 
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center">
@@ -179,7 +180,7 @@ const HomePage = () => {
                     </form>
                 </div>
 
-                {/* Right Column: Analysis Result */}
+                {/* Right Column:  */}
                 <div className="w-full lg:w-1/2 p-6 bg-blue-50 rounded-xl shadow-inner flex flex-col">
                     <h2 className="text-3xl font-bold text-grey-800 text-center mb-6">
                         Analysis <span className="text-gray-900">Results</span>
@@ -190,9 +191,9 @@ const HomePage = () => {
                         </p>
                     )}
                     {analysisResult ? (
-                      
                         <div className="prose max-w-none text-gray-800 leading-relaxed overflow-y-auto flex-grow">
                             {/* Eligibility and ATS Score */}
+
                             <div className="flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-lg shadow-md mb-6">
                                 <div className="text-center md:text-left mb-4 md:mb-0">
                                     <h3 className="text-xl font-bold text-gray-800">Eligibility: <span className="text-blue-700">{analysisResult.is_eligible}</span></h3>
@@ -252,7 +253,7 @@ const HomePage = () => {
                             {analysisResult.skill_gaps && analysisResult.skill_gaps.length === 0 && (
                                 <div className="mb-6">
                                     <h4 className="text-lg font-semibold text-gray-700 mb-2">Skill Gaps:</h4>
-                                    <p className="text-gray-600">No significant skill gaps identified based on the provided job description.</p>
+                                    <p className="text-gray-600">No significant skill gaps identified.</p>
                                 </div>
                             )}
 

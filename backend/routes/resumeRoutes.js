@@ -7,6 +7,6 @@ const router = express.Router();
 
 const upload = multer({ dest: "uploads/" });
 
-router.post('/resume/analyze',protect, upload.single("resume"), analyzeResumeController);
+router.post('/resume/analyze', upload.single("resume"), analyzeResumeController);
 
 export default router;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -11,14 +11,9 @@ function Login() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Determine backend URL based on environment
-    // IMPORTANT: Replace with your actual Render backend URL in production
     const BACKEND_URL = import.meta.env.VITE_BACKEND_API
 
     const handleGoogleLogin = () => {
-        // Redirect the user to the backend's Google OAuth initiation endpoint
-        // The backend will then handle the redirect to Google's auth page
-
         window.location.href = `${BACKEND_URL}/api/v1/auth/google`;
     };
 
@@ -36,7 +31,7 @@ function Login() {
                     user:res.data.user,
                     token:res.data.token
                 });
-                localStorage.setItem('auth',JSON.stringify(res.data));
+                localStorage.setItem('auth_user_data',JSON.stringify(res.data));
                 navigate('/');
             }
             else{
@@ -49,7 +44,6 @@ function Login() {
     }
 
     return (
-        // <div className= "flex items-center justify-center">
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
                 <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back!</h2>
@@ -65,6 +59,7 @@ function Login() {
                         <path d="M8.1 32.8L14.7 27.9C13.2 23.1 13.2 17.9 14.7 13.1L14.8 13.1L8.1 8.2C5.5 13.3 4 18.6 4 24C4 29.4 5.5 34.7 8.1 39.8L8.1 32.8Z" fill="#FBBC05"/>
                         <path d="M24 8C27.6 8 30.9 9.3 33.5 11.7L39.8 5.4C35.8 1.9 30.2 0 24 0C16.8 0 10.7 3.5 8.1 8.6L14.7 13.5C16.5 8.7 20.9 5.4 26 5.4C29.2 5.4 32.1 6.5 34.6 8.1L24 8Z" fill="#EA4335"/>
                     </svg>
+
                     Continue with Google
                 </button>
 
@@ -128,7 +123,6 @@ function Login() {
                 </p>
             </div>
          </div> 
-        //  </div>
     );
 }
 

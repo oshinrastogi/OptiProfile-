@@ -34,7 +34,6 @@ export const protect = async (req, res, next) => {
                 message: 'Not authorized, user not found for this token.'
             });
         }
-
         next(); 
     } catch (error) {
         console.error("Auth: Token verification failed:", error);
