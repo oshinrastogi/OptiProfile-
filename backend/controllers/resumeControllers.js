@@ -182,6 +182,7 @@
 import fs from 'fs/promises'; 
 import PdfParse from 'pdf-parse-new';
 import userSkills from '../models/userSkills.js';
+import SavedResume from '../models/savedResume.js';
 
 export const analyzeResumeController = async (req, res) => {
 
@@ -337,6 +338,58 @@ ${resumeText}
 
 
 
+// POST /api/v1/auth/resumes/save
+export const saveResumeController = async (req, res) => {
+    try {
+        const { name, profession, yearsOfExperience, resumeLink } = req.body;
+
+        if (!name || !profession || !yearsOfExperience || !resumeLink) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required'
+            });
+        }
+
+        const resume = await SavedResume.create({
+            name: name.trim(),
+            profession: profession.trim(),
+            yearsOfExperience: parseInt(yearsOfExperience),
+            resumeLink: resumeLink.trim(),
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: 'Resume saved successfully',
+            data: resume
+        });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// GET /api/v1/auth/resumes
+export const getSavedResumesController = async (req, res) => {
+    try {
+        const resumes = await SavedResume.find().sort({ createdAt: -1 });
+        return res.status(200).json({ success: true, data: resumes });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// DELETE /api/v1/auth/resumes/:id
+export const deleteResumeController = async (req, res) => {
+    try {
+        const resume = await SavedResume.findByIdAndDelete(req.params.id);
+        if (!resume) {
+            return res.status(404).json({ success: false, message: 'Resume not found' });
+        }
+        return res.status(200).json({ success: true, message: 'Resume deleted' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 
 // Do NOT include any text outside the JSON object. 
