@@ -205,7 +205,7 @@ export const analyzeResumeController = async (req, res) => {
         ats_score: 75,
         strengths: ["JAVA","Kotlin"],
         weaknesses: ["You lack SDLC knowledge required in job"],
-        skill_gaps: ["SDLC" "Rust" , "GoLang"],
+        skill_gaps: ["SDLC", "Rust" , "GoLang"],
         missing_keywords: ["Good Communication" , "Learner" ] ,
         five_steps_to_stand_out: [
             "Learn Rust as it would make you stand out",
